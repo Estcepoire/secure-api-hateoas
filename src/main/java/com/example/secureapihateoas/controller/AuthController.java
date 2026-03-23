@@ -36,4 +36,19 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
+        String token = authService.login(loginDTO);
+        
+        AuthResponseDTO response = new AuthResponseDTO();
+        response.setToken(token);
+        response.setEmail(loginDTO.getEmail());
+        response.setMessage("Login successful");
+        
+        Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(AuthController.class).login(loginDTO)).withSelfRel();
+        response.add(selfLink);
+        
+        return ResponseEntity.ok(response);
+    }
+
 }
