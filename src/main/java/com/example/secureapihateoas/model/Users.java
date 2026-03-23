@@ -1,9 +1,15 @@
 package com.example.secureapihateoas.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "users")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,4 +19,6 @@ public class Users {
     private String email;
     private String password;
     private String role= "ROLE_USER";
+    private String name;
+
 }
