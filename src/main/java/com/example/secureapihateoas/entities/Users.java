@@ -1,9 +1,7 @@
-package com.example.secureapihateoas.model;
+package com.example.secureapihateoas.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter @Setter @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Users implements UserDetails {
@@ -62,8 +60,7 @@ public class Users implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
-    }
+        return true;    }
 
     @Override
     public boolean isEnabled() {

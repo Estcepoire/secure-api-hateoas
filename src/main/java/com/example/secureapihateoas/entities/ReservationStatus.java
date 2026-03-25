@@ -1,4 +1,4 @@
-package com.example.secureapihateoas.model;
+package com.example.secureapihateoas.entities;
 
 public enum ReservationStatus {
     CONFIRMED,

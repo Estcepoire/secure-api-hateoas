@@ -1,6 +1,6 @@
 package com.example.secureapihateoas.repository;
 
-import com.example.secureapihateoas.model.Users;
+import com.example.secureapihateoas.entities.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

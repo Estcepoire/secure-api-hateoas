@@ -1,9 +1,10 @@
 package com.example.secureapihateoas.service;
 
 import com.example.secureapihateoas.dto.LoginDTO;
-import com.example.secureapihateoas.model.Users;
+import com.example.secureapihateoas.entities.Users;
 import com.example.secureapihateoas.repository.UserRepository;
 import com.example.secureapihateoas.dto.RegisterDTO;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,7 +44,7 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public String login(LoginDTO dto) {
+    public String login(@NonNull LoginDTO dto) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         dto.getEmail(),

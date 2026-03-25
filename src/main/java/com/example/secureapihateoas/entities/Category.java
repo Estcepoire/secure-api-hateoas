@@ -1,16 +1,14 @@
-package com.example.secureapihateoas.model;
+package com.example.secureapihateoas.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "categories")
-@Data
+@Getter @Setter @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Category {

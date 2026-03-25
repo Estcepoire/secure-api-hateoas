@@ -3,7 +3,7 @@ package com.example.secureapihateoas.controller;
 import com.example.secureapihateoas.dto.AuthResponseDTO;
 import com.example.secureapihateoas.dto.LoginDTO;
 import com.example.secureapihateoas.dto.RegisterDTO;
-import com.example.secureapihateoas.model.Users;
+import com.example.secureapihateoas.entities.Users;
 import com.example.secureapihateoas.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
