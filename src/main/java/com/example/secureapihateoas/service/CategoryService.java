@@ -21,19 +21,16 @@ public class CategoryService {
 
     @Autowired private CategoryRepository categoryRepository;
 
-    // ─── GET ALL ──────────────────────────────────────────────────────────────
     public List<CategoryResponseDTO> getAll() {
         return categoryRepository.findAll().stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
-    // ─── GET BY ID ────────────────────────────────────────────────────────────
     public CategoryResponseDTO getById(Long id) {
         return toDTO(findOrThrow(id));
     }
 
-    // ─── CREATE ───────────────────────────────────────────────────────────────
     public CategoryResponseDTO create(CategoryRequestDTO dto) {
         Category cat = Category.builder()
                 .name(dto.getName())
@@ -42,7 +39,6 @@ public class CategoryService {
         return toDTO(categoryRepository.save(cat));
     }
 
-    // ─── UPDATE ───────────────────────────────────────────────────────────────
     public CategoryResponseDTO update(Long id, CategoryRequestDTO dto) {
         Category cat = findOrThrow(id);
         cat.setName(dto.getName());
@@ -50,13 +46,11 @@ public class CategoryService {
         return toDTO(categoryRepository.save(cat));
     }
 
-    // ─── DELETE ───────────────────────────────────────────────────────────────
     public void delete(Long id) {
         findOrThrow(id);
         categoryRepository.deleteById(id);
     }
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
     private Category findOrThrow(Long id) {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(

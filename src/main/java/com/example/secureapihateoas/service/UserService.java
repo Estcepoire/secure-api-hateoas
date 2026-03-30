@@ -19,19 +19,16 @@ public class UserService {
 
     @Autowired private UserRepository userRepository;
 
-    // ─── GET ALL ──────────────────────────────────────────────────────────────
     public List<UserResponseDTO> getAll() {
         return userRepository.findAll().stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
-    // ─── GET BY ID ────────────────────────────────────────────────────────────
     public UserResponseDTO getById(Long id) {
         return toDTO(findOrThrow(id));
     }
 
-    // ─── UPDATE ───────────────────────────────────────────────────────────────
     public UserResponseDTO update(Long id, String name, String role) {
         Users user = findOrThrow(id);
         if (name != null && !name.isBlank()) user.setName(name);
@@ -39,13 +36,11 @@ public class UserService {
         return toDTO(userRepository.save(user));
     }
 
-    // ─── DELETE ───────────────────────────────────────────────────────────────
     public void delete(Long id) {
         findOrThrow(id);
         userRepository.deleteById(id);
     }
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
     private Users findOrThrow(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(

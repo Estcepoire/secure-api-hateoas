@@ -26,16 +26,11 @@ public class DashboardService {
     @Autowired private CategoryRepository categoryRepository;
     @Autowired private UserRepository userRepository;
 
-    // =========================================================================
-    // Dashboard Global
-    // =========================================================================
-
+    
     public DashboardDTO getGlobalDashboard() {
 
-        // ─── Utilisateurs ────────────────────────────────────────────
         long totalUsers = userRepository.count();
 
-        // ─── Événements ──────────────────────────────────────────────
         long totalEvents = eventRepository.count();
         long eventsWithAvailablePlaces = eventRepository.countEventsWithAvailablePlaces();
 
@@ -45,7 +40,6 @@ public class DashboardService {
                 .average()
                 .orElse(0.0);
 
-        // ─── Réservations ─────────────────────────────────────────────
         long totalReservations = reservationRepository.count();
         long confirmedReservations = reservationRepository.countByStatus(ReservationStatus.CONFIRMED);
         long cancelledReservations = reservationRepository.countByStatus(ReservationStatus.CANCELLED);
@@ -56,24 +50,20 @@ public class DashboardService {
         reservationsByStatus.put("CANCELLED", cancelledReservations);
         reservationsByStatus.put("PENDING", pendingReservations);
 
-        // ─── Avis ─────────────────────────────────────────────────────
         long totalReviews = reviewRepository.count();
         Double rawGlobalRating = reviewRepository.getGlobalAverageRating();
         double globalAverageRating = rawGlobalRating != null
                 ? Math.round(rawGlobalRating * 10.0) / 10.0
                 : 0.0;
 
-        // ─── Catégories ───────────────────────────────────────────────
         long totalCategories = categoryRepository.count();
         Map<String, Long> eventsByCategory = new LinkedHashMap<>();
         for (Object[] row : eventRepository.countEventsByCategory()) {
             eventsByCategory.put((String) row[0], (Long) row[1]);
         }
 
-        // ─── Top 5 événements par fill rate ────────────────────────────
         List<TopEventDTO> topByFillRate = buildTopEventList(allEvents, true);
 
-        // ─── Top 5 événements par note moyenne ─────────────────────────
         List<TopEventDTO> topByRating = buildTopEventList(allEvents, false);
 
         DashboardDTO dto = DashboardDTO.builder()
@@ -94,7 +84,6 @@ public class DashboardService {
                 .topEventsByRating(topByRating)
                 .build();
 
-        // ─── HATEOAS ──────────────────────────────────────────────────
         dto.add(WebMvcLinkBuilder
                 .linkTo(WebMvcLinkBuilder.methodOn(DashboardController.class).getGlobalDashboard())
                 .withSelfRel());
@@ -102,23 +91,18 @@ public class DashboardService {
         return dto;
     }
 
-    // =========================================================================
-    // Dashboard par Événement
-    // =========================================================================
-
+    
     public EventDashboardDTO getEventDashboard(Long eventId) {
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Événement introuvable : " + eventId));
 
-        // ─── Infos générales ──────────────────────────────────────────
         List<String> categories = event.getCategories()
                 .stream()
                 .map(c -> c.getName())
                 .collect(Collectors.toList());
 
-        // ─── Réservations ─────────────────────────────────────────────
         long totalReservations = reservationRepository.findByEvent(event).size();
         long confirmed = reservationRepository.countByEventAndStatusQuery(event, ReservationStatus.CONFIRMED);
         long cancelled  = reservationRepository.countByEventAndStatusQuery(event, ReservationStatus.CANCELLED);
@@ -129,7 +113,6 @@ public class DashboardService {
         reservationsByStatus.put("CANCELLED", cancelled);
         reservationsByStatus.put("PENDING", pending);
 
-        // ─── Avis ─────────────────────────────────────────────────────
         long totalReviews = reviewRepository.findByEvent(event).size();
 
         Double rawAvg = reviewRepository.getAverageRatingByEvent(event);
@@ -137,7 +120,6 @@ public class DashboardService {
                 ? Math.round(rawAvg * 10.0) / 10.0
                 : 0.0;
 
-        // Distribution des notes 1→5
         Map<Integer, Long> ratingDistribution = new TreeMap<>();
         for (int i = 1; i <= 5; i++) ratingDistribution.put(i, 0L);
         for (Object[] row : reviewRepository.getRatingDistributionForEvent(event)) {
@@ -171,7 +153,6 @@ public class DashboardService {
                 .positiveReviewRate(positiveReviewRate)
                 .build();
 
-        // ─── HATEOAS ──────────────────────────────────────────────────
         dto.add(WebMvcLinkBuilder
                 .linkTo(WebMvcLinkBuilder.methodOn(DashboardController.class).getEventDashboard(eventId))
                 .withSelfRel());
@@ -182,16 +163,6 @@ public class DashboardService {
         return dto;
     }
 
-    // =========================================================================
-    // Helpers
-    // =========================================================================
-
-    /**
-     * Construit le top 5 des événements.
-     *
-     * @param allEvents  liste de tous les événements
-     * @param byFillRate si {@code true} → tri par taux de remplissage ; sinon → tri par note moyenne
-     */
     private List<TopEventDTO> buildTopEventList(List<Event> allEvents, boolean byFillRate) {
         return allEvents.stream()
                 .map(e -> {

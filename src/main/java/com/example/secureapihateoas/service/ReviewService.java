@@ -24,19 +24,16 @@ public class ReviewService {
     @Autowired private EventRepository eventRepository;
     @Autowired private UserRepository userRepository;
 
-    // ─── GET ALL ──────────────────────────────────────────────────────────────
     public List<ReviewResponseDTO> getAll() {
         return reviewRepository.findAll().stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
-    // ─── GET BY ID ────────────────────────────────────────────────────────────
     public ReviewResponseDTO getById(Long id) {
         return toDTO(findOrThrow(id));
     }
 
-    // ─── GET BY EVENT ─────────────────────────────────────────────────────────
     public List<ReviewResponseDTO> getByEvent(Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -46,7 +43,6 @@ public class ReviewService {
                 .collect(Collectors.toList());
     }
 
-    // ─── CREATE ───────────────────────────────────────────────────────────────
     public ReviewResponseDTO create(ReviewRequestDTO dto) {
         Event event = eventRepository.findById(dto.getEventId())
                 .orElseThrow(() -> new ResponseStatusException(
@@ -66,7 +62,6 @@ public class ReviewService {
         return toDTO(reviewRepository.save(review));
     }
 
-    // ─── UPDATE ───────────────────────────────────────────────────────────────
     public ReviewResponseDTO update(Long id, ReviewRequestDTO dto) {
         Review review = findOrThrow(id);
         review.setRating(dto.getRating());
@@ -74,13 +69,11 @@ public class ReviewService {
         return toDTO(reviewRepository.save(review));
     }
 
-    // ─── DELETE ───────────────────────────────────────────────────────────────
     public void delete(Long id) {
         findOrThrow(id);
         reviewRepository.deleteById(id);
     }
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
     private Review findOrThrow(Long id) {
         return reviewRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -102,7 +95,6 @@ public class ReviewService {
         dto.add(linkTo(methodOn(ReviewController.class).getById(r.getId())).withSelfRel());
         dto.add(linkTo(methodOn(ReviewController.class).getAll()).withRel("reviews"));
         
-        // Liens vers les ressources liées
         dto.add(linkTo(methodOn(UserController.class).getById(r.getUser().getId())).withRel("user"));
         dto.add(linkTo(methodOn(EventController.class).getById(r.getEvent().getId())).withRel("event"));
         

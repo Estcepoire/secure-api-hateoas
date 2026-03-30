@@ -25,19 +25,16 @@ public class ReservationService {
     @Autowired private EventRepository eventRepository;
     @Autowired private UserRepository userRepository;
 
-    // ─── GET ALL (avec filtrage multi-critères) ───────────────────────────────
     public List<ReservationResponseDTO> getAll(Long userId, Long eventId, ReservationStatus status) {
         return reservationRepository.searchReservations(userId, eventId, status).stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
-    // ─── GET BY ID ────────────────────────────────────────────────────────────
     public ReservationResponseDTO getById(Long id) {
         return toDTO(findOrThrow(id));
     }
 
-    // ─── GET BY EVENT ─────────────────────────────────────────────────────────
     public List<ReservationResponseDTO> getByEvent(Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -47,7 +44,6 @@ public class ReservationService {
                 .collect(Collectors.toList());
     }
 
-    // ─── GET BY USER ──────────────────────────────────────────────────────────
     public List<ReservationResponseDTO> getByUser(Long userId) {
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -57,7 +53,6 @@ public class ReservationService {
                 .collect(Collectors.toList());
     }
 
-    // ─── CREATE ───────────────────────────────────────────────────────────────
     public ReservationResponseDTO create(ReservationRequestDTO dto) {
         Event event = eventRepository.findById(dto.getEventId())
                 .orElseThrow(() -> new ResponseStatusException(
@@ -82,20 +77,17 @@ public class ReservationService {
         return toDTO(reservationRepository.save(reservation));
     }
 
-    // ─── UPDATE STATUS ────────────────────────────────────────────────────────
     public ReservationResponseDTO updateStatus(Long id, ReservationStatus newStatus) {
         Reservation reservation = findOrThrow(id);
         reservation.setStatus(newStatus);
         return toDTO(reservationRepository.save(reservation));
     }
 
-    // ─── DELETE ───────────────────────────────────────────────────────────────
     public void delete(Long id) {
         findOrThrow(id);
         reservationRepository.deleteById(id);
     }
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
     private Reservation findOrThrow(Long id) {
         return reservationRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -116,11 +108,9 @@ public class ReservationService {
         dto.add(linkTo(methodOn(ReservationController.class).getById(r.getId())).withSelfRel());
         dto.add(linkTo(methodOn(ReservationController.class).getAll(null, null, null)).withRel("reservations"));
         
-        // Liens vers les ressources liées
         dto.add(linkTo(methodOn(UserController.class).getById(r.getUser().getId())).withRel("user"));
         dto.add(linkTo(methodOn(EventController.class).getById(r.getEvent().getId())).withRel("event"));
         
-        // Action dynamique : Annuler seulement si ce n'est pas déjà fait
         if (r.getStatus() != ReservationStatus.CANCELLED) {
             dto.add(linkTo(methodOn(ReservationController.class)
                     .updateStatus(r.getId(), ReservationStatus.CANCELLED))

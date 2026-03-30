@@ -13,7 +13,6 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    // A securely long secret key for HS256 algorithm
     private static final String SECRET = "ma-cle-secrete-tres-longue-et-tres-secrete-1234567890";
 
     private Key getKey() {

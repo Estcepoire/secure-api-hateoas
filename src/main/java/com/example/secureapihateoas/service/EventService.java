@@ -26,19 +26,16 @@ public class EventService {
     @Autowired private EventRepository eventRepository;
     @Autowired private CategoryRepository categoryRepository;
 
-    // ─── GET ALL (avec filtrage multi-critères) ───────────────────────────────
     public List<EventResponseDTO> getAll(Long categoryId, String location) {
         return eventRepository.searchEvents(categoryId, location).stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
-    // ─── GET BY ID ────────────────────────────────────────────────────────────
     public EventResponseDTO getById(Long id) {
         return toDTO(findOrThrow(id));
     }
 
-    // ─── CREATE ───────────────────────────────────────────────────────────────
     public EventResponseDTO create(EventRequestDTO dto) {
         List<Category> categories = resolveCategories(dto.getCategoryIds());
         Event event = Event.builder()
@@ -52,7 +49,6 @@ public class EventService {
         return toDTO(eventRepository.save(event));
     }
 
-    // ─── UPDATE ───────────────────────────────────────────────────────────────
     public EventResponseDTO update(Long id, EventRequestDTO dto) {
         Event event = findOrThrow(id);
         event.setTitle(dto.getTitle());
@@ -64,13 +60,11 @@ public class EventService {
         return toDTO(eventRepository.save(event));
     }
 
-    // ─── DELETE ───────────────────────────────────────────────────────────────
     public void delete(Long id) {
         findOrThrow(id);
         eventRepository.deleteById(id);
     }
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
     private Event findOrThrow(Long id) {
         return eventRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -106,7 +100,6 @@ public class EventService {
         dto.add(linkTo(methodOn(EventController.class).getById(e.getId())).withSelfRel());
         dto.add(linkTo(methodOn(EventController.class).getAll(null, null)).withRel("events"));
         
-        // Nouveaux liens hypermédias intelligents
         dto.add(linkTo(methodOn(ReviewController.class).getByEvent(e.getId())).withRel("reviews"));
         
         if (e.hasAvailablePlaces()) {
