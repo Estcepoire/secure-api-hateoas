@@ -9,8 +9,23 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
+
     List<Review> findByEvent(Event event);
-    @Query("select avg(r.rating) from Review r where r.event = :event")
-    Double getAverageRatingByEvent(@Param("event") Event event);
+
     List<Review> findByEventOrderByCreatedAtDesc(Event event);
+
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.event = :event")
+    Double getAverageRatingByEvent(@Param("event") Event event);
+
+    // ─── Dashboard global ─────────────────────────────────────────────────────
+    @Query("SELECT AVG(r.rating) FROM Review r")
+    Double getGlobalAverageRating();
+
+    // ─── Distribution des notes pour un événement (1→5) ──────────────────────
+    @Query("SELECT r.rating, COUNT(r) FROM Review r WHERE r.event = :event GROUP BY r.rating ORDER BY r.rating")
+    List<Object[]> getRatingDistributionForEvent(@Param("event") Event event);
+
+    // ─── Nombre d'avis positifs (note >= 4) pour un événement ────────────────
+    @Query("SELECT COUNT(r) FROM Review r WHERE r.event = :event AND r.rating >= 4")
+    long countPositiveReviewsByEvent(@Param("event") Event event);
 }
