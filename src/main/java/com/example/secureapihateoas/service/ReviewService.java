@@ -1,6 +1,8 @@
 package com.example.secureapihateoas.service;
 
+import com.example.secureapihateoas.controller.EventController;
 import com.example.secureapihateoas.controller.ReviewController;
+import com.example.secureapihateoas.controller.UserController;
 import com.example.secureapihateoas.dto.ReviewRequestDTO;
 import com.example.secureapihateoas.dto.ReviewResponseDTO;
 import com.example.secureapihateoas.entities.*;
@@ -99,6 +101,11 @@ public class ReviewService {
 
         dto.add(linkTo(methodOn(ReviewController.class).getById(r.getId())).withSelfRel());
         dto.add(linkTo(methodOn(ReviewController.class).getAll()).withRel("reviews"));
+        
+        // Liens vers les ressources liées
+        dto.add(linkTo(methodOn(UserController.class).getById(r.getUser().getId())).withRel("user"));
+        dto.add(linkTo(methodOn(EventController.class).getById(r.getEvent().getId())).withRel("event"));
+        
         return dto;
     }
 }

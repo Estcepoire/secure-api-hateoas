@@ -24,9 +24,12 @@ public class ReservationController {
     @Autowired private ReservationService reservationService;
 
     @GetMapping
-    @Operation(summary = "Lister toutes les réservations")
-    public ResponseEntity<List<ReservationResponseDTO>> getAll() {
-        return ResponseEntity.ok(reservationService.getAll());
+    @Operation(summary = "Lister toutes les réservations (filtres : userId, eventId, status)")
+    public ResponseEntity<List<ReservationResponseDTO>> getAll(
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) Long eventId,
+            @RequestParam(required = false) ReservationStatus status) {
+        return ResponseEntity.ok(reservationService.getAll(userId, eventId, status));
     }
 
     @GetMapping("/{id}")

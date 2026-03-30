@@ -1,6 +1,8 @@
 package com.example.secureapihateoas.service;
 
+import com.example.secureapihateoas.controller.EventController;
 import com.example.secureapihateoas.controller.ReservationController;
+import com.example.secureapihateoas.controller.UserController;
 import com.example.secureapihateoas.dto.ReservationRequestDTO;
 import com.example.secureapihateoas.dto.ReservationResponseDTO;
 import com.example.secureapihateoas.entities.*;
@@ -23,9 +25,9 @@ public class ReservationService {
     @Autowired private EventRepository eventRepository;
     @Autowired private UserRepository userRepository;
 
-    // ─── GET ALL ──────────────────────────────────────────────────────────────
-    public List<ReservationResponseDTO> getAll() {
-        return reservationRepository.findAll().stream()
+    // ─── GET ALL (avec filtrage multi-critères) ───────────────────────────────
+    public List<ReservationResponseDTO> getAll(Long userId, Long eventId, ReservationStatus status) {
+        return reservationRepository.searchReservations(userId, eventId, status).stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
@@ -112,7 +114,19 @@ public class ReservationService {
                 .build();
 
         dto.add(linkTo(methodOn(ReservationController.class).getById(r.getId())).withSelfRel());
-        dto.add(linkTo(methodOn(ReservationController.class).getAll()).withRel("reservations"));
+        dto.add(linkTo(methodOn(ReservationController.class).getAll(null, null, null)).withRel("reservations"));
+        
+        // Liens vers les ressources liées
+        dto.add(linkTo(methodOn(UserController.class).getById(r.getUser().getId())).withRel("user"));
+        dto.add(linkTo(methodOn(EventController.class).getById(r.getEvent().getId())).withRel("event"));
+        
+        // Action dynamique : Annuler seulement si ce n'est pas déjà fait
+        if (r.getStatus() != ReservationStatus.CANCELLED) {
+            dto.add(linkTo(methodOn(ReservationController.class)
+                    .updateStatus(r.getId(), ReservationStatus.CANCELLED))
+                    .withRel("cancel"));
+        }
+        
         return dto;
     }
 }

@@ -10,8 +10,10 @@ import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    @Query("SELECT e FROM Event e JOIN e.categories c WHERE c.id = :categoryId")
-    List<Event> findByCategoryId(@Param("categoryId") Long categoryId);
+    @Query("SELECT DISTINCT e FROM Event e LEFT JOIN e.categories c " +
+           "WHERE (:categoryId IS NULL OR c.id = :categoryId) " +
+           "AND (:location IS NULL OR LOWER(e.location) LIKE LOWER(CONCAT('%', :location, '%')))")
+    List<Event> searchEvents(@Param("categoryId") Long categoryId, @Param("location") String location);
 
     List<Event> findByEventDateBetween(LocalDateTime start, LocalDateTime end);
 

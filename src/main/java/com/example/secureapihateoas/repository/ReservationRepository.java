@@ -19,6 +19,14 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     Optional<Reservation> findByUserAndEvent(Users user, Event event);
     long countByEventAndStatus(Event event, ReservationStatus status);
 
+    @Query("SELECT r FROM Reservation r " +
+           "WHERE (:userId IS NULL OR r.user.id = :userId) " +
+           "AND (:eventId IS NULL OR r.event.id = :eventId) " +
+           "AND (:status IS NULL OR r.status = :status)")
+    List<Reservation> searchReservations(@Param("userId") Long userId, 
+                                         @Param("eventId") Long eventId, 
+                                         @Param("status") ReservationStatus status);
+
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.event = :event AND r.status = 'CONFIRMED'")
     long countConfirmedReservationsByEvent(@Param("event") Event event);
 

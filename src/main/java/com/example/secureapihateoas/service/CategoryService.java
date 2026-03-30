@@ -1,6 +1,7 @@
 package com.example.secureapihateoas.service;
 
 import com.example.secureapihateoas.controller.CategoryController;
+import com.example.secureapihateoas.controller.EventController;
 import com.example.secureapihateoas.dto.CategoryRequestDTO;
 import com.example.secureapihateoas.dto.CategoryResponseDTO;
 import com.example.secureapihateoas.entities.Category;
@@ -72,6 +73,8 @@ public class CategoryService {
 
         dto.add(linkTo(methodOn(CategoryController.class).getById(c.getId())).withSelfRel());
         dto.add(linkTo(methodOn(CategoryController.class).getAll()).withRel("categories"));
+        dto.add(linkTo(methodOn(EventController.class).getAll(c.getId(), null)).withRel("events"));
+        
         return dto;
     }
 }

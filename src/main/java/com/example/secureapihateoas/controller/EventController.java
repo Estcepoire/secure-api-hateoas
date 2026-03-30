@@ -23,9 +23,10 @@ public class EventController {
     @Autowired private EventService eventService;
 
     @GetMapping
-    @Operation(summary = "Lister tous les événements")
-    public ResponseEntity<List<EventResponseDTO>> getAll() {
-        return ResponseEntity.ok(eventService.getAll());
+    @Operation(summary = "Lister tous les événements (filtres : categoryId, location)")
+    public ResponseEntity<List<EventResponseDTO>> getAll(@RequestParam(required = false) Long categoryId,
+                                                         @RequestParam(required = false) String location) {
+        return ResponseEntity.ok(eventService.getAll(categoryId, location));
     }
 
     @GetMapping("/{id}")

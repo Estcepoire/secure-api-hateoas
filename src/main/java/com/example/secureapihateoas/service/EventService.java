@@ -1,8 +1,11 @@
 package com.example.secureapihateoas.service;
 
 import com.example.secureapihateoas.controller.EventController;
+import com.example.secureapihateoas.controller.ReservationController;
+import com.example.secureapihateoas.controller.ReviewController;
 import com.example.secureapihateoas.dto.EventRequestDTO;
 import com.example.secureapihateoas.dto.EventResponseDTO;
+import com.example.secureapihateoas.dto.ReservationRequestDTO;
 import com.example.secureapihateoas.entities.Category;
 import com.example.secureapihateoas.entities.Event;
 import com.example.secureapihateoas.repository.CategoryRepository;
@@ -23,9 +26,9 @@ public class EventService {
     @Autowired private EventRepository eventRepository;
     @Autowired private CategoryRepository categoryRepository;
 
-    // ─── GET ALL ──────────────────────────────────────────────────────────────
-    public List<EventResponseDTO> getAll() {
-        return eventRepository.findAll().stream()
+    // ─── GET ALL (avec filtrage multi-critères) ───────────────────────────────
+    public List<EventResponseDTO> getAll(Long categoryId, String location) {
+        return eventRepository.searchEvents(categoryId, location).stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
@@ -101,7 +104,15 @@ public class EventService {
                 .build();
 
         dto.add(linkTo(methodOn(EventController.class).getById(e.getId())).withSelfRel());
-        dto.add(linkTo(methodOn(EventController.class).getAll()).withRel("events"));
+        dto.add(linkTo(methodOn(EventController.class).getAll(null, null)).withRel("events"));
+        
+        // Nouveaux liens hypermédias intelligents
+        dto.add(linkTo(methodOn(ReviewController.class).getByEvent(e.getId())).withRel("reviews"));
+        
+        if (e.hasAvailablePlaces()) {
+            dto.add(linkTo(methodOn(ReservationController.class).create(new ReservationRequestDTO())).withRel("reserve"));
+        }
+        
         return dto;
     }
 }
