@@ -13,7 +13,6 @@ import java.util.Map;
 @Schema(description = "Dashboard détaillé d'un événement spécifique")
 public class EventDashboardDTO extends RepresentationModel<EventDashboardDTO> {
 
-    // ─── Infos générales ─────────────────────────────────────────────
     @Schema(description = "Identifiant de l'événement", example = "1")
     private Long eventId;
 
@@ -32,7 +31,6 @@ public class EventDashboardDTO extends RepresentationModel<EventDashboardDTO> {
     @Schema(description = "Catégories associées à l'événement")
     private List<String> categories;
 
-    // ─── Capacité & remplissage ──────────────────────────────────────
     @Schema(description = "Capacité maximale", example = "200")
     private int maxParticipants;
 
@@ -45,7 +43,6 @@ public class EventDashboardDTO extends RepresentationModel<EventDashboardDTO> {
     @Schema(description = "L'événement a-t-il encore des places disponibles ?", example = "true")
     private boolean hasAvailablePlaces;
 
-    // ─── Réservations ────────────────────────────────────────────────
     @Schema(description = "Nombre total de réservations pour cet événement", example = "180")
     private long totalReservations;
 
@@ -61,7 +58,6 @@ public class EventDashboardDTO extends RepresentationModel<EventDashboardDTO> {
     @Schema(description = "Répartition des réservations par statut")
     private Map<String, Long> reservationsByStatus;
 
-    // ─── Avis ────────────────────────────────────────────────────────
     @Schema(description = "Nombre total d'avis", example = "85")
     private long totalReviews;
 
