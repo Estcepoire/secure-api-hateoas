@@ -25,10 +25,6 @@ public class DashboardController {
     @Autowired
     private DashboardService dashboardService;
 
-    // =========================================================================
-    // GET /api/dashboard  →  Vue globale de la plateforme
-    // =========================================================================
-
     @GetMapping
     @Operation(
         summary     = "Dashboard global de la plateforme",
@@ -68,9 +64,6 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.getGlobalDashboard());
     }
 
-    // =========================================================================
-    // GET /api/dashboard/events/{id}  →  Vue détaillée d'un événement
-    // =========================================================================
 
     @GetMapping("/events/{id}")
     @Operation(

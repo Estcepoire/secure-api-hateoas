@@ -30,19 +30,16 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.event = :event AND r.status = 'CONFIRMED'")
     long countConfirmedReservationsByEvent(@Param("event") Event event);
 
-    // ─── Dashboard global ─────────────────────────────────────────────────────
+
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.status = :status")
     long countByStatus(@Param("status") ReservationStatus status);
 
-    // ─── Réservations par statut pour un événement ────────────────────────────
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.event = :event AND r.status = :status")
     long countByEventAndStatusQuery(@Param("event") Event event, @Param("status") ReservationStatus status);
 
-    // ─── Distribution des réservations par statut pour un événement ──────────
     @Query("SELECT r.status, COUNT(r) FROM Reservation r WHERE r.event = :event GROUP BY r.status")
     List<Object[]> countGroupedByStatusForEvent(@Param("event") Event event);
 
-    // ─── Distribution globale par statut ─────────────────────────────────────
     @Query("SELECT r.status, COUNT(r) FROM Reservation r GROUP BY r.status")
     List<Object[]> countGroupedByStatus();
 }

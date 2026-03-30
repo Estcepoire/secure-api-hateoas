@@ -12,11 +12,9 @@ import java.util.Map;
 @Schema(description = "Dashboard global de la plateforme")
 public class DashboardDTO extends RepresentationModel<DashboardDTO> {
 
-    // ─── Utilisateurs ───────────────────────────────────────────────
     @Schema(description = "Nombre total d'utilisateurs inscrits", example = "320")
     private long totalUsers;
 
-    // ─── Événements ─────────────────────────────────────────────────
     @Schema(description = "Nombre total d'événements", example = "45")
     private long totalEvents;
 
@@ -26,7 +24,6 @@ public class DashboardDTO extends RepresentationModel<DashboardDTO> {
     @Schema(description = "Taux de remplissage moyen de tous les événements (en %)", example = "62.5")
     private double averageFillRate;
 
-    // ─── Réservations ────────────────────────────────────────────────
     @Schema(description = "Nombre total de réservations", example = "850")
     private long totalReservations;
 
@@ -42,21 +39,20 @@ public class DashboardDTO extends RepresentationModel<DashboardDTO> {
     @Schema(description = "Répartition des réservations par statut (CONFIRMED, CANCELLED, PENDING)")
     private Map<String, Long> reservationsByStatus;
 
-    // ─── Avis ────────────────────────────────────────────────────────
+
     @Schema(description = "Nombre total d'avis", example = "430")
     private long totalReviews;
 
     @Schema(description = "Note globale moyenne (sur 5)", example = "4.1")
     private double globalAverageRating;
 
-    // ─── Catégories ──────────────────────────────────────────────────
+
     @Schema(description = "Nombre total de catégories", example = "8")
     private long totalCategories;
 
     @Schema(description = "Nombre d'événements par catégorie")
     private Map<String, Long> eventsByCategory;
 
-    // ─── Top événements ──────────────────────────────────────────────
     @Schema(description = "Top 5 événements par taux de remplissage")
     private List<TopEventDTO> topEventsByFillRate;
 
